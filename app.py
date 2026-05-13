@@ -4,7 +4,7 @@ import plotly.graph_objects as go
 import plotly.express as px
 
 # Set page config
-st.set_page_config(page_title="Gold Price Analysis & Prediction", layout="wide", initial_sidebar_state="expanded")
+st.set_page_config(page_title="Análisis y Predicción del Precio del Oro", layout="wide", initial_sidebar_state="expanded")
 
 from modules.data_loader import load_and_preprocess_data
 from modules.features import create_features
@@ -35,16 +35,16 @@ def load_data():
     df = create_features(df)
     return df
 
-st.title("🥇 Gold Price Prediction Dashboard")
+st.title("◈ Panel de Predicción del Precio del Oro")
 
-with st.spinner("Loading and preprocessing data..."):
+with st.spinner("Cargando y preprocesando datos..."):
     df = load_data()
 
-st.sidebar.header("Navigation")
-page = st.sidebar.radio("Go to", ["Data Overview & EDA", "ARIMA / SARIMA Models", "LSTM Neural Network"])
+st.sidebar.header("◉ Navegación")
+page = st.sidebar.radio("Ir a", ["▣ Resumen de Datos y AED", "◆ Modelos ARIMA / SARIMA", "◇ Red Neuronal LSTM"])
 
-if page == "Data Overview & EDA":
-    st.header("Exploratory Data Analysis")
+if page == "▣ Resumen de Datos y AED":
+    st.header("▸ Análisis Exploratorio de Datos")
     
     # Metrics
     col1, col2, col3 = st.columns(3)
@@ -52,30 +52,30 @@ if page == "Data Overview & EDA":
     prev_gold = df['Gold_Price'].iloc[-2]
     gold_pct = ((latest_gold - prev_gold) / prev_gold) * 100
     
-    col1.metric("Latest Gold Price", f"${latest_gold:,.2f}", f"{gold_pct:.2f}%")
+    col1.metric("Último Precio del Oro", f"${latest_gold:,.2f}", f"{gold_pct:.2f}%")
     if 'Bitcoin_Price' in df.columns and not pd.isna(df['Bitcoin_Price'].iloc[-1]):
-        col2.metric("Latest Bitcoin Price", f"${df['Bitcoin_Price'].iloc[-1]:,.2f}")
+        col2.metric("Último Precio de Bitcoin", f"${df['Bitcoin_Price'].iloc[-1]:,.2f}")
     if 'VIX' in df.columns and not pd.isna(df['VIX'].iloc[-1]):
-        col3.metric("Latest VIX", f"{df['VIX'].iloc[-1]:.2f}")
+        col3.metric("Último VIX", f"{df['VIX'].iloc[-1]:.2f}")
         
-    st.subheader("Historical Gold Price")
+    st.subheader("▹ Precio Histórico del Oro")
     fig = go.Figure()
-    fig.add_trace(go.Scatter(x=df['Date'], y=df['Gold_Price'], mode='lines', name='Gold', line=dict(color='#FFD700')))
-    fig.update_layout(template="plotly_dark", xaxis_title="Date", yaxis_title="Price (USD)", margin=dict(l=0, r=0, t=30, b=0))
+    fig.add_trace(go.Scatter(x=df['Date'], y=df['Gold_Price'], mode='lines', name='Oro', line=dict(color='#FFD700')))
+    fig.update_layout(template="plotly_dark", xaxis_title="Fecha", yaxis_title="Precio (USD)", margin=dict(l=0, r=0, t=30, b=0))
     st.plotly_chart(fig, use_container_width=True)
     
-    st.subheader("Correlation Analysis")
+    st.subheader("▹ Análisis de Correlación")
     corr_df = df[['Gold_Price', 'VIX', 'Bitcoin_Price']].dropna()
     corr = corr_df.corr()
     fig_corr = px.imshow(corr, text_auto=True, aspect="auto", color_continuous_scale='Viridis', template="plotly_dark")
     st.plotly_chart(fig_corr, use_container_width=True)
 
-elif page == "ARIMA / SARIMA Models":
-    st.header("ARIMA / SARIMA Forecasting")
-    st.write("Training ARIMA model on the latest 1000 days and forecasting...")
+elif page == "◆ Modelos ARIMA / SARIMA":
+    st.header("▸ Pronóstico ARIMA / SARIMA")
+    st.write("Entrenando el modelo ARIMA con los últimos 1000 días y generando pronóstico...")
     
-    if st.button("Run ARIMA Model"):
-        with st.spinner("Training model..."):
+    if st.button("▶ Ejecutar Modelo ARIMA"):
+        with st.spinner("Entrenando modelo..."):
             # Only use the last 1000 rows to speed up ARIMA training
             train_df = df.iloc[-1000:].reset_index(drop=True)
             train_size = int(len(train_df) * 0.8)
@@ -89,18 +89,18 @@ elif page == "ARIMA / SARIMA Models":
             col2.metric("MAE", f"{mae:.2f}")
             
             fig = go.Figure()
-            fig.add_trace(go.Scatter(x=train['Date'].iloc[-500:], y=train['Gold_Price'].iloc[-500:], mode='lines', name='Train'))
-            fig.add_trace(go.Scatter(x=test['Date'], y=test['Gold_Price'], mode='lines', name='Actual Test'))
-            fig.add_trace(go.Scatter(x=test['Date'], y=predictions, mode='lines', name='ARIMA Predictions', line=dict(color='red')))
+            fig.add_trace(go.Scatter(x=train['Date'].iloc[-500:], y=train['Gold_Price'].iloc[-500:], mode='lines', name='Entrenamiento'))
+            fig.add_trace(go.Scatter(x=test['Date'], y=test['Gold_Price'], mode='lines', name='Prueba Real'))
+            fig.add_trace(go.Scatter(x=test['Date'], y=predictions, mode='lines', name='Predicciones ARIMA', line=dict(color='red')))
             fig.update_layout(template="plotly_dark")
             st.plotly_chart(fig, use_container_width=True)
 
-elif page == "LSTM Neural Network":
-    st.header("LSTM Neural Network Forecasting")
-    st.write("Training LSTM model using historical prices, VIX, and Bitcoin as features...")
+elif page == "◇ Red Neuronal LSTM":
+    st.header("▸ Pronóstico con Red Neuronal LSTM")
+    st.write("Entrenando el modelo LSTM utilizando precios históricos, VIX y Bitcoin como características...")
     
-    if st.button("Run LSTM Model"):
-        with st.spinner("Training deep learning model (this may take a minute)..."):
+    if st.button("▶ Ejecutar Modelo LSTM"):
+        with st.spinner("Entrenando modelo de aprendizaje profundo (esto puede tardar un momento)..."):
             features = ['Gold_Price', 'VIX', 'MA_7', 'MA_30']
             
             # Forward fill missing to avoid NaNs in LSTM
@@ -120,8 +120,8 @@ elif page == "LSTM Neural Network":
             col2.metric("MAE", f"{mae:.2f}")
             
             fig = go.Figure()
-            fig.add_trace(go.Scatter(x=train['Date'].iloc[-500:], y=train['Gold_Price'].iloc[-500:], mode='lines', name='Train'))
-            fig.add_trace(go.Scatter(x=test['Date'], y=test['Gold_Price'], mode='lines', name='Actual Test'))
-            fig.add_trace(go.Scatter(x=test['Date'], y=predictions, mode='lines', name='LSTM Predictions', line=dict(color='orange')))
+            fig.add_trace(go.Scatter(x=train['Date'].iloc[-500:], y=train['Gold_Price'].iloc[-500:], mode='lines', name='Entrenamiento'))
+            fig.add_trace(go.Scatter(x=test['Date'], y=test['Gold_Price'], mode='lines', name='Prueba Real'))
+            fig.add_trace(go.Scatter(x=test['Date'], y=predictions, mode='lines', name='Predicciones LSTM', line=dict(color='orange')))
             fig.update_layout(template="plotly_dark")
             st.plotly_chart(fig, use_container_width=True)
