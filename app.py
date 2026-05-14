@@ -66,8 +66,15 @@ with st.sidebar:
         look_back = st.slider("Ventana de tiempo (días)", 10, 60, 30)
         st.session_state.lstm_config = {"epochs": epochs, "look_back": look_back}
     
-    st.markdown("<br><br>", unsafe_allow_html=True)
     st.markdown(f'<div style="color: #475569; font-size: 0.7rem;">Última actualización:<br>{datetime.now().strftime("%d/%m/%Y %H:%M")}</div>', unsafe_allow_html=True)
+
+# ── Variables Globales de Métricas ──
+# Se definen aquí para que estén disponibles en todas las páginas (ej: Proyección)
+latest_gold = df['Gold_Price'].iloc[-1]
+prev_gold = df['Gold_Price'].iloc[-2]
+gold_pct = ((latest_gold - prev_gold) / prev_gold) * 100
+latest_vix = df['VIX'].iloc[-1] if 'VIX' in df.columns else 0
+latest_btc = df['Bitcoin_Price'].iloc[-1] if 'Bitcoin_Price' in df.columns else 0
 
 # ── Lógica de Páginas ──
 
@@ -76,13 +83,7 @@ if page == "📊 Panel de Control & AED":
     st.markdown(section_header("fa-solid fa-chart-line", "Análisis Exploratorio de Datos"), unsafe_allow_html=True)
     st.markdown('<p class="section-desc">Visualización en tiempo real del mercado del oro y variables correlacionadas. Datos históricos desde el año 2000.</p>', unsafe_allow_html=True)
     
-    # Métricas Principales
-    latest_gold = df['Gold_Price'].iloc[-1]
-    prev_gold = df['Gold_Price'].iloc[-2]
-    gold_pct = ((latest_gold - prev_gold) / prev_gold) * 100
-    
-    latest_vix = df['VIX'].iloc[-1] if 'VIX' in df.columns else 0
-    latest_btc = df['Bitcoin_Price'].iloc[-1] if 'Bitcoin_Price' in df.columns else 0
+    # Métricas Principales (Ya definidas globalmente arriba)
     
     cards = [
         metric_card("fa-solid fa-coins", "Precio Oro (USD)", f"${latest_gold:,.2f}", f"{gold_pct:+.2f}%", gold_pct >= 0),
