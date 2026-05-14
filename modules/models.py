@@ -9,9 +9,6 @@ import time
 from statsmodels.tsa.statespace.sarimax import SARIMAX
 from sklearn.metrics import mean_squared_error, mean_absolute_error
 from sklearn.preprocessing import MinMaxScaler
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import LSTM, Dense, Dropout
-from tensorflow.keras.callbacks import EarlyStopping
 
 
 # ── Entrenamiento ARIMA ──
@@ -88,6 +85,14 @@ def train_lstm(train_df, test_df, features, epochs=20, look_back=30):
     X_train, y_train = prepare_lstm_data(scaled_train, look_back)
     X_test, y_test = prepare_lstm_data(scaled_test, look_back)
 
+    # Lazy loading de TensorFlow para evitar errores de importación en el arranque
+    try:
+        from tensorflow.keras.models import Sequential
+        from tensorflow.keras.layers import LSTM, Dense, Dropout
+        from tensorflow.keras.callbacks import EarlyStopping
+    except ImportError:
+        raise ImportError("No se pudo cargar TensorFlow. Asegúrate de que esté instalado en requirements.txt")
+
     # Definir la arquitectura de la red neuronal
     model = Sequential()
     model.add(LSTM(50, return_sequences=True, input_shape=(X_train.shape[1], X_train.shape[2])))
@@ -139,6 +144,12 @@ def predict_future_lstm(df, features, model, scaler, horizon_days=252, look_back
 
     future_predictions = []
 
+    # Lazy loading de TensorFlow
+    try:
+        from tensorflow.keras.models import Sequential
+    except ImportError:
+        pass # El modelo ya debería estar cargado si llegamos aquí
+    
     for i in range(horizon_days):
         input_reshaped = current_input.reshape(1, look_back, len(features))
         pred = model.predict(input_reshaped, verbose=0)[0, 0]
