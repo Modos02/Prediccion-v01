@@ -43,7 +43,7 @@ with st.spinner("🚀 Inicializando plataforma financiera..."):
 
 # ── Sidebar de Navegación y Configuración ──
 with st.sidebar:
-    st.markdown(f'<div style="text-align: center; padding: 20px 0;"><h1 style="color: #3b82f6 !important; font-size: 1.8rem !important; margin:0;">GOLD<span style="color: #f1f5f9;">PREDICT</span></h1><p style="color: #64748b; font-size: 0.7rem; letter-spacing: 2px; font-weight: 700;">PRO ANALYTICS v1.0</p></div>', unsafe_allow_html=True)
+    st.markdown(f'<div style="text-align: center; padding: 20px 0;"><h1 style="color: #3b82f6 !important; font-size: 1.8rem !important; margin:0;">GOLD<span style="color: #f1f5f9;">PREDICT</span></h1><p style="color: #64748b; font-size: 0.7rem; letter-spacing: 2px; font-weight: 700;">ANÁLISIS PROFESIONAL v1.0</p></div>', unsafe_allow_html=True)
     
     st.markdown("<br>", unsafe_allow_html=True)
     page = st.sidebar.radio("MENÚ PRINCIPAL", [
@@ -217,7 +217,7 @@ elif page == "🧠 Red Neuronal LSTM":
             fig = go.Figure()
             fig.add_trace(go.Scatter(x=res['train']['Date'].iloc[-200:], y=res['train']['Gold_Price'].iloc[-200:], name='Entrenamiento', line=dict(color='#64748b')))
             fig.add_trace(go.Scatter(x=res['test']['Date'], y=res['test']['Gold_Price'], name='Real', line=dict(color='#f1f5f9')))
-            fig.add_trace(go.Scatter(x=res['test']['Date'], y=res['preds'], name='LSTM Prediction', line=dict(color='#22c55e', width=3)))
+            fig.add_trace(go.Scatter(x=res['test']['Date'], y=res['preds'], name='Predicción LSTM', line=dict(color='#22c55e', width=3)))
             
             fig.update_layout(template="plotly_dark", paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', margin=dict(l=0, r=0, t=0, b=0))
             st.plotly_chart(fig, use_container_width=True)
