@@ -45,8 +45,8 @@ def predict_future_arima(df, order=(1, 1, 1), horizon_days=252):
     model_fit = model.fit(disp=False)
 
     # En lugar de usar la media predicha (línea recta), generamos un camino simulado realista
-    np.random.seed(42) # Semilla para consistencia visual
-    predictions = model_fit.simulate(nsimulations=horizon_days, anchor='end').values
+    # Pasamos random_state=42 para bloquear la simulación y evitar que cambie en cada clic
+    predictions = model_fit.simulate(nsimulations=horizon_days, anchor='end', random_state=42).values
     
     # Ya no usamos intervalos de confianza porque mostraremos el camino proyectado
     lower_ci = np.zeros(horizon_days)
