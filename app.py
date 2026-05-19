@@ -241,12 +241,9 @@ elif page == "🔮 Proyección a 10 Años":
             fig = go.Figure()
             # Datos históricos últimos 2 años
             hist_subset = df.iloc[-500:]
-            fig.add_trace(go.Scatter(x=hist_subset['Date'], y=hist_subset['Gold_Price'], name='Precio Actual', line=dict(color='#64748b')))
-            # Proyección
-            fig.add_trace(go.Scatter(x=future_dates, y=future_preds, name='Tendencia Proyectada', line=dict(color='#3b82f6', width=4)))
-            # Intervalo
-            fig.add_trace(go.Scatter(x=future_dates, y=upper, fill=None, mode='lines', line_color='rgba(59,130,246,0)', showlegend=False))
-            fig.add_trace(go.Scatter(x=future_dates, y=lower, fill='tonexty', mode='lines', line_color='rgba(59,130,246,0)', fillcolor='rgba(59,130,246,0.1)', name='Rango de Probabilidad'))
+            fig.add_trace(go.Scatter(x=hist_subset['Date'], y=hist_subset['Gold_Price'], name='Precio Actual', line=dict(color='#64748b', width=2)))
+            # Proyección (Camino simulado realista)
+            fig.add_trace(go.Scatter(x=future_dates, y=future_preds, name='Proyección Simulada', line=dict(color='#3b82f6', width=2)))
             
             fig.update_layout(
                 template="plotly_dark", paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)',

@@ -44,11 +44,13 @@ def predict_future_arima(df, order=(1, 1, 1), horizon_days=252):
     model = SARIMAX(df['Gold_Price'], order=order)
     model_fit = model.fit(disp=False)
 
-    forecast = model_fit.get_forecast(steps=horizon_days)
-    predictions = forecast.predicted_mean.values
-    conf_int = forecast.conf_int(alpha=0.05)
-    lower_ci = conf_int.iloc[:, 0].values
-    upper_ci = conf_int.iloc[:, 1].values
+    # En lugar de usar la media predicha (línea recta), generamos un camino simulado realista
+    np.random.seed(42) # Semilla para consistencia visual
+    predictions = model_fit.simulate(nsimulations=horizon_days, anchor='end').values
+    
+    # Ya no usamos intervalos de confianza porque mostraremos el camino proyectado
+    lower_ci = np.zeros(horizon_days)
+    upper_ci = np.zeros(horizon_days)
 
     # Crear fechas futuras (días hábiles)
     last_date = df['Date'].iloc[-1]
